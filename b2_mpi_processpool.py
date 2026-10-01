@@ -3,8 +3,7 @@ import random
 from concurrent.futures import ProcessPoolExecutor
 
 SAMPLES_PER_TASK = 210_000
-TOTAL_TASKS = 48
-
+TOTAL_TASKS = 48   
 def hitung_task(seed):
     rng = random.Random(seed)
     di_dalam = 0
@@ -16,7 +15,7 @@ def hitung_task(seed):
 
 
 def main():
-    from mpi4py import MPI
+    from mpi4py import MPI   
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=1)
@@ -30,7 +29,7 @@ def main():
     with ProcessPoolExecutor(max_workers=a.workers) as pool:
         list(pool.map(abs, range(a.workers)))
 
-        comm.Barrier()                 # semua rank mulai bersamaan
+        comm.Barrier()             
         t0 = MPI.Wtime()
         hasil_lokal = sum(pool.map(hitung_task, tugas_saya))
         total_dalam = comm.reduce(hasil_lokal, op=MPI.SUM, root=0)
@@ -42,5 +41,5 @@ def main():
         print(f"HASIL ranks={size} workers={a.workers} makespan={makespan:.3f}s pi={pi:.5f}")
 
 
-if __name__ == "__main__":   
+if __name__ == "__main__": 
     main()

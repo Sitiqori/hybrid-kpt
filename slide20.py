@@ -19,7 +19,7 @@ def chunk_range(total, parts, idx):
     return start, end
 
 if __name__ == "__main__":
-    TOTAL_TASKS = 8              
+    TOTAL_TASKS = 8                
     SAMPLES_PER_TASK = 250_000    
     start, end = chunk_range(TOTAL_TASKS, size, rank)
     my_tasks = range(start, end)

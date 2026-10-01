@@ -5,7 +5,7 @@ import re
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
-STOPWORDS = {"dan", "yang", "di", "the", "of", "and",      
+STOPWORDS = {"dan", "yang", "di", "the", "of", "and",  
              "to", "a", "in", "is", "it", "that", "was", "for", "with", "as", "he",
              "she", "his", "her", "i", "you", "but", "not", "be", "at", "on", "had",
              "have", "by", "this", "from", "or", "they", "we", "my", "me", "so"}
@@ -14,14 +14,14 @@ STOPWORDS = {"dan", "yang", "di", "the", "of", "and",
 def hitung_file(path):
     """Satu tugas = baca file (I/O) + tokenisasi regex (CPU). Mengembalikan Counter."""
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
-        teks = f.read()                                
+        teks = f.read()                               
     kata = re.findall(r"[a-zA-Z']+", teks.lower())      
     return Counter(k for k in kata if k not in STOPWORDS)
 
 
 def main():
     from mpi4py import MPI
-    
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["thread", "process"], default="thread")
     ap.add_argument("--workers", type=int, default=4)
@@ -32,17 +32,17 @@ def main():
     rank, size = comm.Get_rank(), comm.Get_size()
 
     semua = sorted(glob.glob(os.path.join(a.data, "*.txt")))
-    milik_saya = semua[rank::size]                      
+    milik_saya = semua[rank::size]                       
 
     Executor = ThreadPoolExecutor if a.mode == "thread" else ProcessPoolExecutor
     with Executor(max_workers=a.workers) as ex:
-        list(ex.map(len, ["x"] * a.workers))           
+        list(ex.map(len, ["x"] * a.workers))              
         comm.Barrier()
         t0 = MPI.Wtime()
         lokal = Counter()
         for c in ex.map(hitung_file, milik_saya):
             lokal.update(c)
-        semua_counter = comm.gather(lokal, root=0)      
+        semua_counter = comm.gather(lokal, root=0)       
         comm.Barrier()
         waktu = MPI.Wtime() - t0
 

@@ -10,7 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 DATA_DIR = "dataset_hybrid"
 IO_DELAY = 0.005  
-CPU_REPEAT = 3   
+CPU_REPEAT = 3    
 SENTINEL = None
 
 
@@ -28,7 +28,7 @@ def loader(daftar_file, q, jumlah_loader, id_loader):
         with open(path, "r", encoding="utf-8") as f:
             teks = f.read()
         time.sleep(IO_DELAY)
-        q.put((time.perf_counter(), teks))
+        q.put((time.perf_counter(), teks))   
 
 
 def dispatcher(q, pool, latensi, lock):
@@ -87,5 +87,5 @@ def main():
         w.writerow([a.loaders, a.workers, a.qmax, f"{total:.3f}", f"{throughput:.3f}", f"{avg_lat*1000:.1f}"])
 
 
-if __name__ == "__main__":      
+if __name__ == "__main__":     
     main()
